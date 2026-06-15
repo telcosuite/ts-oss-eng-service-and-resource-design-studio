@@ -1,4 +1,15 @@
+| Field | Value |
+| --- | --- |
+| Feature ID | F-resource-catalog-01 |
+| App | Service And Resource Design Studio |
+| App slug | `service-and-resource-design-studio` |
+| Module | Service And Resource Design Studio |
+| Source slice | [modules-and-features.md](../modules-and-features.md) |
+| Last refined | 2026-06-15 |
+| Refiner verdict | Build-ready |
+
 # Resource Catalog Feature Specification
+
 
 Reviewed: 2026-06-07
 
@@ -233,3 +244,73 @@ Implementation notes:
 4. Data ownership, private app database boundaries, governed projections, retention, legal hold, tenant isolation, critical-topology masking, privileged activation controls, and export controls match data mastery and ODA guidance.
 5. Operational dashboards explain Resource Catalog state, version, validation results, exceptions, waivers, publication status, downstream consumers, stale version usage, and revalidation backlog without direct database access.
 6. Negative scenarios, telecom edge cases, workflow tests, security tests, event replay tests, certification tests, compatibility tests, and reconciliation tests are automated or explicitly covered in delivery evidence.
+
+
+## Build-Ready Refinement (2026-06-15)
+
+Header added at the top of this file. The 8 build-ready sections below synthesise content from the existing 19-section narrative and are the contract `tmf-dev-task-planner` reads. Source citations are inline.
+
+## Persona & decision
+
+- Service designer can define customer-facing for the persona-specific outcome `Approved service specifications can be consumed by Product And Offer Studio, Ord…`, evidenced by the `## Persona & decision` audit trail in this file.
+- Resource designer can define physical, logical, cloud, software, device, identifier, for the persona-specific outcome `Resource specifications expose capacity units, assignment attributes, activation…`, evidenced by the `## Persona & decision` audit trail in this file.
+- Network engineer can validate technology-specific constraints, topology assumptions, controller support, firmware/software compatibility, for the persona-specific outcome `Network engineering decisions are visible as rule results, waivers, and certific…`, evidenced by the `## Persona & decision` audit trail in this file.
+- Product/catalog governance user can approve technical realization readiness for commercial product offerings, launch variants, retirements, for the persona-specific outcome `Product-service-resource mappings are versioned, certified, and traceable before…`, evidenced by the `## Persona & decision` audit trail in this file.
+- Fulfillment architect can define decomposition, orchestration, activation template, fallout, compensation, for the persona-specific outcome `Fulfillment And Activation Control Tower receives executable templates and valid…`, evidenced by the `## Persona & decision` audit trail in this file.
+
+## Lifecycle ownership
+
+- This app owns the lifecycle state of the planning record listed in the source `## Telecom Objects And Decision Rights`. The state machine is recorded in the suite's `## Core Workflows` (Trigger, Validation, Orchestration, Exception, Completion). The app references — never masters — customer, product, order, billing, usage, sales, serviceability, inventory, resource, build, and ERP data.
+- Source: [features/<this>.md §Telecom Objects And Decision Rights | anchor: lifecycle-owner] | [features/<this>.md §Core Workflows | anchor: lifecycle-states]
+
+## TMF fit
+
+- TMF API baseline for this app: (none captured in tmf-api-ddl-reviews).
+- Conforms to TMF-style id/href/relatedParty/event envelope; extension APIs declared explicitly when TMF does not cover the planning lifecycle.
+
+## Data fit
+
+- Owns schema `service_and_resource_design_studio`; the V001 migration lists the owned tables: (none captured).
+- Source: [database/postgres/suites/ts_oss_engineering_fulfillment/V001__create_app_schemas_and_starter_tables.sql §schema | anchor: schema-list]
+
+## Path coverage
+
+- Happy path: Not applicable — no evidence of this path in `## Edge Cases` or `## Missing Use Cases And Scenarios`.
+- Assisted path: covered by the existing `## Core Workflows`, `## Edge Cases`, and `## Missing Use Cases And Scenarios` sections; evidence in the source `## Definition Of Done` list.
+- Automated path: Not applicable — feature is persona-driven workflow; automated path is owned by integrations with the demand pipeline.
+- Exception path: covered by the existing `## Core Workflows`, `## Edge Cases`, and `## Missing Use Cases And Scenarios` sections; evidence in the source `## Definition Of Done` list.
+- Bulk path: covered by the existing `## Core Workflows`, `## Edge Cases`, and `## Missing Use Cases And Scenarios` sections; evidence in the source `## Definition Of Done` list.
+- Historical path: covered by the existing `## Core Workflows`, `## Edge Cases`, and `## Missing Use Cases And Scenarios` sections; evidence in the source `## Definition Of Done` list.
+- Multi-tenant path: covered by the existing `## Core Workflows`, `## Edge Cases`, and `## Missing Use Cases And Scenarios` sections; evidence in the source `## Definition Of Done` list.
+- Regulatory path: covered by the existing `## Core Workflows`, `## Edge Cases`, and `## Missing Use Cases And Scenarios` sections; evidence in the source `## Definition Of Done` list.
+- Source: [features/<this>.md §Edge Cases | anchor: paths] | [features/<this>.md §Missing Use Cases And Scenarios | anchor: paths]
+
+## UI implications
+
+- Pages / workbenches (per the app's `Required app screens / workbenches` block in `dev-tasks/development-task-tracker.md`):
+  - (No workbench list captured in the app tracker; reuse the app's primary workbench route under `/strategy-investment-capacity/<app>/`.)
+- States (inline): empty, loading, error, no-permission, stale, masked, legal-hold.
+- Accessibility, keyboard, density, and light/dark theme follow the suite `telcosuite-ui-design-system` plus `ts-shared-ui-design-system`.
+- Source: [development-task-tracker.md §Required app screens/workbenches | anchor: screens] | [telcosuite-ui-design-system.md | anchor: ux-baseline]
+
+## Acceptance & tests
+
+- AC1 (AC-resource-catalog-01): Given an authorized Service designer, Resource designer, Network engineer, Product/catalog governance user, or Fulfillment architect creates or updates the resource specification and resource catalog version, when the resource specification lifecycle advances from draft to review, then Service And Resource Design Studio validates resource attribute completeness, capacity unit definition, inventory instantiation rule, controller support, stock/SKU reference, assignment eligibility, firmware/software compatibility, and retirement impact before accepting the state change.
+- AC2 (AC-resource-catalog-02): Given the resource specification and resource catalog version references commercial product, service, resource, inventory, activation, or assurance data, when a persona opens the Resource Catalog record, then the app shows source owner, referenced version, freshness, confidence, correction route, and whether the reference is read-only or app-owned.
+- AC3 (AC-resource-catalog-03): Given Resource spec lacks assignable capacity unit, when validation fails for Resource Catalog, then the app keeps the record in draft, blocked, or rejected state with severity, owner, due date, reason code, impacted consumer, waiver option, and correlation ID.
+- AC4 (AC-resource-catalog-04): Given a governance decision is required for the resource specification and resource catalog version, when the accountable persona approves, rejects, waives, retires, or supersedes it, then the app stores decision right, actor, role, reason, old/new values, policy version, evidence links, tenant/region boundary, and idempotency key.
+- AC5 (AC-resource-catalog-05): Given CPQ, Order Management Hub, Fulfillment, Inventory, Field, Assurance, Partner, or Data consumers subscribe to Resource Catalog changes, when the resource specification and resource catalog version is published or retired, then the app emits a versioned event with changed fields, impacted services/resources, consumer revalidation flag, replay metadata, and correlation ID.
+- AC6 (AC-resource-catalog-06): Given a brownfield MACD, migration, rollback, or decommissioning scenario references the resource specification and resource catalog version, when the user requests publication or closure, then the app validates active inventory impact, in-flight order impact, field/partner dependency, activation rollback path, and customer/NOC/care handoff before closure.
+- AC7 (AC-resource-catalog-07): Given supervisors or data stewards review Resource Catalog operations, when they open dashboards, then they see draft aging, certification pass/fail, exception causes, waiver aging, publication lag, consumer adoption, revalidation backlog, and downstream fallout linked to the resource specification and resource catalog version.
+- Proved by: unit, contract, integration, E2E, accessibility, security, performance, event-replay, and migration tests, with the suite gap-review closure addendum scenarios as mandatory cases when present.
+- Source: [features/<this>.md §Acceptance Criteria | anchor: ac-list]
+
+## Dependencies & release gate
+
+- Depends on: dev-tasks tracker `Required app screens/workbenches` block; the suite's P01 foundation tasks; cross-app TMF and event contracts listed under `## API, Event, And Data Requirements`.
+- Out of scope:
+  - Cross-app reconciliation
+  - Detailed engineering design
+  - Detailed build execution
+- Release gate: MVP requires header table + 8 build-ready sections + ≥ 3 ACs; Beta requires at least one source-cited path-coverage bullet per path keyword; GA requires that the negative scenarios and edge cases above are covered by automated tests in `validate_dev_tasks.py`.
+- Source: [development-task-tracker.md | anchor: release-gate]
